@@ -22,8 +22,7 @@ typedef unsigned short mtype;
 t_sequencia ler_entrada(char *filename)
 {
 	FILE *arquivo_sequencia = NULL;
-
-	printf("%s\n\n", filename);
+	int i = 0;
 	arquivo_sequencia = fopen(filename, "rt");
 	t_sequencia s;
 
@@ -33,35 +32,35 @@ t_sequencia ler_entrada(char *filename)
 		exit(1);
 	}
 
-	// // verifica o tamanho da arquivo_sequencia
-	// fseek(arquivo_sequencia, 0L, SEEK_END);
-	// // salva o tamanho da arquivo_sequencia
-	// s.tam = ftell(arquivo_sequencia);
-	// // volta o arquivo para o inicio
-	// rewind(arquivo_sequencia);
+	// verifica o tamanho da arquivo_sequencia
+	fseek(arquivo_sequencia, 0L, SEEK_END);
+	// salva o tamanho da arquivo_sequencia
+	s.tam = ftell(arquivo_sequencia);
+	// volta o arquivo para o inicio
+	rewind(arquivo_sequencia);
 
-	// // aloca memoria para salvar valor da sequencia
+	// aloca memoria para salvar valor da sequencia
 
-	// s.texto = (char *)malloc(s.tam + 1 * sizeof(char));
-	// if (s.texto == NULL)
-	// {
-	// 	printf("Erro ao alocar memória da sequencia");
-	// 	exit(1);
-	// }
+	s.texto = (char *)malloc(s.tam + 1 * sizeof(char));
+	if (s.texto == NULL)
+	{
+		printf("Erro ao alocar memória da sequencia");
+		exit(1);
+	}
 
-	// // leitura da sequencia
-	// // read sequence from file
-	// while (!feof(arquivo_sequencia))
-	// {
-	// 	s.texto[i] = fgetc(arquivo_sequencia);
-	// 	if ((s.texto[i] != '\n') && (s.texto[i] != EOF))
-	// 		i++;
-	// }
+	// leitura da sequencia
+	// read sequence from file
+	while (!feof(arquivo_sequencia))
+	{
+		s.texto[i] = fgetc(arquivo_sequencia);
+		if ((s.texto[i] != '\n') && (s.texto[i] != EOF))
+			i++;
+	}
 
-	// strcpy("\0", &s.texto[i]);
+	strcpy("\0", &s.texto[i]);
 
-	// // fecha o arquivo
-	// fclose(arquivo_sequencia);
+	// fecha o arquivo
+	fclose(arquivo_sequencia);
 	return s;
 }
 mtype **allocateScoreMatrix(long sizeA, long sizeB)
