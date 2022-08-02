@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "time.h"
 
 #ifndef max
 #define max(a, b) (((a) > (b)) ? (a) : (b))
@@ -153,7 +154,7 @@ int main(int argc, char **argv)
 
 	t_sequencia sequencia1;
 	t_sequencia sequencia2;
-
+	time_t begin, end;
 	// read both sequences
 	sequencia1 = ler_entrada(argv[1]);
 	sequencia2 = ler_entrada(argv[2]);
@@ -163,8 +164,11 @@ int main(int argc, char **argv)
 
 	// initialize LCS score matrix
 	initScoreMatrix(scoreMatrix, sequencia1.tam, sequencia2.tam);
+
 	// fill up the rest of the matrix and return final score (element locate at the last line and collumn)
+	begin = time(NULL);
 	mtype score = LCS(scoreMatrix, sequencia1.tam, sequencia2.tam, sequencia1.texto, sequencia2.texto);
+	end = time(NULL);
 
 	// 	/* if you wish to see the entire score matrix,
 	// 	 for debug purposes, define DEBUGMATRIX. */
@@ -174,6 +178,7 @@ int main(int argc, char **argv)
 
 	// print score
 	printf("\nScore: %d\n", score);
+	printf("Tempo de processamento: %f ", difftime(end, begin));
 
 	// free score matrix
 	freeScoreMatrix(scoreMatrix, sequencia2.tam);
