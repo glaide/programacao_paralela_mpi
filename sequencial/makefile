@@ -1,7 +1,7 @@
 
 CC=gcc
 #flags para warning, depuração e biblioteca de matematica
-CFLAGS= -Wall -fopenmp -O3
+CFLAGS=-g -Wall -fopenmp -O3
 
 #regras de ligação
 lcs = lcs-sequencial.o

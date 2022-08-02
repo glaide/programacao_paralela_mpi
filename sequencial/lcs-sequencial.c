@@ -56,8 +56,7 @@ t_sequencia ler_entrada(char *filename)
 		if ((s.texto[i] != '\n') && (s.texto[i] != EOF))
 			i++;
 	}
-
-	strcpy("\0", &s.texto[i]);
+	s.texto[i] = '\0';
 
 	// fecha o arquivo
 	fclose(arquivo_sequencia);
@@ -155,37 +154,29 @@ int main(int argc, char **argv)
 	t_sequencia sequencia1;
 	t_sequencia sequencia2;
 
-	for (int i = 0; i < argc; i++)
-	{
-		printf("%s\n\n", argv[i]);
-	}
-
-	printf("aaaaaaaaaaa\n\n");
-
 	// read both sequences
 	sequencia1 = ler_entrada(argv[1]);
 	sequencia2 = ler_entrada(argv[2]);
 
-	// 	// allocate LCS score matrix
-	// 	mtype **scoreMatrix = allocateScoreMatrix(sequencia1.tam, sequencia2.tam);
+	// allocate LCS score matrix
+	mtype **scoreMatrix = allocateScoreMatrix(sequencia1.tam, sequencia2.tam);
 
-	// 	// initialize LCS score matrix
-	// 	initScoreMatrix(scoreMatrix, sequencia1.tam, sequencia2.tam);
+	// initialize LCS score matrix
+	initScoreMatrix(scoreMatrix, sequencia1.tam, sequencia2.tam);
+	// fill up the rest of the matrix and return final score (element locate at the last line and collumn)
+	mtype score = LCS(scoreMatrix, sequencia1.tam, sequencia2.tam, sequencia1.texto, sequencia2.texto);
 
-	// 	// fill up the rest of the matrix and return final score (element locate at the last line and collumn)
-	// 	mtype score = LCS(scoreMatrix, sequencia1.tam, sequencia2.tam, sequencia1.texto, sequencia2.texto);
+	// 	/* if you wish to see the entire score matrix,
+	// 	 for debug purposes, define DEBUGMATRIX. */
+#ifdef DEBUGMATRIX
+	printMatrix(seqA, seqB, scoreMatrix, sequencia1.tam, sequencia2.tam);
+#endif
 
-	// 	// 	/* if you wish to see the entire score matrix,
-	// 	// 	 for debug purposes, define DEBUGMATRIX. */
-	// #ifdef DEBUGMATRIX
-	// 	printMatrix(seqA, seqB, scoreMatrix, sequencia1.tam, sequencia2.tam);
-	// #endif
+	// print score
+	printf("\nScore: %d\n", score);
 
-	// 	// print score
-	// 	printf("\nScore: %d\n", score);
+	// free score matrix
+	freeScoreMatrix(scoreMatrix, sequencia2.tam);
 
-	// 	// free score matrix
-	// 	freeScoreMatrix(scoreMatrix, sequencia2.tam);
-
-	// 	return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
