@@ -7,7 +7,7 @@
 
 // tamanho tabela ASCII para possíveis entradas
 #define TAM_MAX_CHAR 256
-#define NUM_THREADS 6
+#define NUM_THREADS 1
 #define max(x, y) ((x) > (y) ? (x) : (y))
 int *P_Matrix;
 char *string_A;
@@ -232,12 +232,12 @@ int main(int argc, char *argv[])
 
     // printf("\n##################################\n");
     // printf("\n######## Resultados ########\n");
-    // if (n_threads != 0)
-    // {
-    //     omp_set_num_threads(n_threads);
-    // }
-    // else
-    omp_set_num_threads(6);
+    if (n_threads != 0)
+    {
+        omp_set_num_threads(n_threads);
+    }
+    else
+        omp_set_num_threads(NUM_THREADS);
 
     // #pragma omp parallel
     //     {
