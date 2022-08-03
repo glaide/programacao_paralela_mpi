@@ -7,7 +7,7 @@
 
 // tamanho tabela ASCII para possíveis entradas
 #define TAM_MAX_CHAR 256
-#define NUM_THREADS 8
+#define NUM_THREADS 6
 #define max(x, y) ((x) > (y) ? (x) : (y))
 
 typedef struct sequencia
