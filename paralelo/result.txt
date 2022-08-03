@@ -1,0 +1,160 @@
+10.860514
+Número de threads:  1
+10.749833
+Número de threads:  1
+10.612078
+Número de threads:  1
+10.629787
+Número de threads:  1
+10.564776
+Número de threads:  1
+10.617524
+Número de threads:  1
+10.811015
+Número de threads:  1
+10.927517
+Número de threads:  1
+10.759516
+Número de threads:  1
+10.917137
+Número de threads:  1
+11.146597
+Número de threads:  1
+10.883980
+Número de threads:  1
+11.027184
+Número de threads:  1
+10.713010
+Número de threads:  1
+10.983847
+Número de threads:  1
+10.615356
+Número de threads:  1
+11.207626
+Número de threads:  1
+10.804726
+Número de threads:  1
+11.082818
+Número de threads:  1
+10.745046
+Número de threads:  1
+10.916027
+Número de threads:  2
+11.006011
+Número de threads:  2
+12.669899
+Número de threads:  2
+11.265004
+Número de threads:  2
+11.492257
+Número de threads:  2
+10.742766
+Número de threads:  2
+11.033824
+Número de threads:  2
+10.709373
+Número de threads:  2
+10.757623
+Número de threads:  2
+11.040113
+Número de threads:  2
+10.918313
+Número de threads:  2
+10.995134
+Número de threads:  2
+11.085101
+Número de threads:  2
+10.995840
+Número de threads:  2
+10.698903
+Número de threads:  2
+10.661435
+Número de threads:  2
+10.869222
+Número de threads:  2
+10.916565
+Número de threads:  2
+11.074374
+Número de threads:  2
+10.812222
+Número de threads:  2
+10.611489
+Número de threads:  4
+9.561231
+Número de threads:  4
+10.769733
+Número de threads:  4
+10.873567
+Número de threads:  4
+10.621964
+Número de threads:  4
+10.692061
+Número de threads:  4
+10.967065
+Número de threads:  4
+11.423978
+Número de threads:  4
+11.185302
+Número de threads:  4
+11.082071
+Número de threads:  4
+11.073700
+Número de threads:  4
+11.293922
+Número de threads:  4
+11.313297
+Número de threads:  4
+10.972346
+Número de threads:  4
+11.133433
+Número de threads:  4
+11.185124
+Número de threads:  4
+10.926148
+Número de threads:  4
+10.867409
+Número de threads:  4
+11.114387
+Número de threads:  4
+11.203850
+Número de threads:  4
+10.895102
+Número de threads:  6
+10.873504
+Número de threads:  6
+10.774280
+Número de threads:  6
+11.184461
+Número de threads:  6
+10.801182
+Número de threads:  6
+10.992736
+Número de threads:  6
+10.951596
+Número de threads:  6
+11.042210
+Número de threads:  6
+10.988059
+Número de threads:  6
+10.818969
+Número de threads:  6
+10.752877
+Número de threads:  6
+11.031951
+Número de threads:  6
+10.794859
+Número de threads:  6
+10.791154
+Número de threads:  6
+10.765473
+Número de threads:  6
+10.955610
+Número de threads:  6
+10.849447
+Número de threads:  6
+11.106037
+Número de threads:  6
+10.717059
+Número de threads:  6
+10.745901
+Número de threads:  6

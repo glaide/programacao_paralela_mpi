@@ -64,7 +64,6 @@ t_sequencia tam_char_seq(t_sequencia seqA, t_sequencia seqB, int *seq_char)
     }
     s.tam = tam_char;
     s.texto[s.tam + 1] = '\0';
-    printf("%s \n", s.texto);
 
     return s;
 }
@@ -221,31 +220,32 @@ int main(int argc, char *argv[])
     sequenciaA = ler_entrada(argv[1]);
 
     sequenciaB = ler_entrada(argv[2]);
+
     if (argv[3] != NULL)
     {
         n_threads = atoi(argv[3]);
     }
     sequenciaC = calc_char_unicos(sequenciaA, sequenciaB);
 
-    printf("Tamanho da sequencia A: %ld bp\n", sequenciaA.tam);
-    printf("Tamanho da sequencia B: %ld bp\n", sequenciaB.tam);
+    // printf("Tamanho da sequencia A: %ld bp\n", sequenciaA.tam);
+    // printf("Tamanho da sequencia B: %ld bp\n", sequenciaB.tam);
 
     // printf("\n##################################\n");
-    printf("\n######## Resultados ########\n");
-    if (n_threads != 0)
-    {
-        omp_set_num_threads(n_threads);
-    }
-    else
-        omp_set_num_threads(NUM_THREADS);
+    // printf("\n######## Resultados ########\n");
+    // if (n_threads != 0)
+    // {
+    //     omp_set_num_threads(n_threads);
+    // }
+    // else
+    omp_set_num_threads(6);
 
-#pragma omp parallel
-    {
-#pragma omp single
-        {
-            printf("Número de threads: %d\n", omp_get_num_threads());
-        }
-    }
+    // #pragma omp parallel
+    //     {
+    // #pragma omp single
+    //         {
+    //             printf("Número de threads: %d\n", omp_get_num_threads());
+    //         }
+    //     }
 
     linha_atual = calloc((sequenciaB.tam + 1), sizeof(int));
     linha_ant = calloc((sequenciaB.tam + 1), sizeof(int));
@@ -259,9 +259,9 @@ int main(int argc, char *argv[])
     int res = calc_dif_distancia(linha_atual, linha_ant, P_Matrix, sequenciaA, sequenciaB, sequenciaC);
 
     stop_time = omp_get_wtime();
-    printf("Tamanho do LCS é: %d\n", res);
+    // printf("Tamanho do LCS é: %d\n", res);
 
-    printf("tempo total: %lf seconds\n", stop_time - start_time);
+    printf("%lf\n", stop_time - start_time);
 
     free(P_Matrix);
     free(linha_atual);
