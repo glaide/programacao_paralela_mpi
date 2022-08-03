@@ -7,7 +7,7 @@
 
 // tamanho tabela ASCII para possíveis entradas
 #define TAM_MAX_CHAR 256
-#define NUM_THREADS 6
+#define NUM_THREADS 4
 #define max(x, y) ((x) > (y) ? (x) : (y))
 
 typedef struct sequencia
@@ -16,35 +16,35 @@ typedef struct sequencia
     long tam;
 } t_sequencia;
 
-t_sequencia tam_char_seq(char *seqA, char *seqB, int *seq_char);
+t_sequencia tam_char_seq(t_sequencia seqA, t_sequencia seqB, int *seq_char);
 t_sequencia ler_entrada(char *filename);
-int indice_char_unico(char *str, char x, int len);
-void calc_matriz_P(int **P, char *b, long len_b, char *c, long len_c);
+int indice_char_unico(t_sequencia C, char x);
+void calc_matriz_P(int **P, t_sequencia B, t_sequencia C);
 int calc_dif_distancia(int *atual, int *anterior, int **P, t_sequencia A, t_sequencia B, t_sequencia C);
 int lcs(int *DP, int *prev_row, t_sequencia a, t_sequencia b);
 
-t_sequencia tam_char_seq(char *seqA, char *seqB, int *seq_char)
+t_sequencia tam_char_seq(t_sequencia seqA, t_sequencia seqB, int *seq_char)
 {
     int tam_char = 0;
     int index = 0;
     t_sequencia s;
-    for (int i = 0; i < strlen(seqA); i++)
+    for (int i = 0; i < seqA.tam; i++)
     {
-        if (seq_char[(int)seqA[i]] == 0) // significa que ainda não passou por esse char
+        if (seq_char[(int)seqA.texto[i]] == 0) // significa que ainda não passou por esse char
         {
             tam_char++;
         }
-        index = (int)seqA[i];
+        index = (int)seqA.texto[i];
         seq_char[index] = 1;
     }
 
-    for (int i = 0; i < strlen(seqB); i++)
+    for (int i = 0; i < seqB.tam; i++)
     {
-        if (seq_char[(int)seqB[i]] == 0) // significa que ainda não passou por esse char
+        if (seq_char[(int)seqB.texto[i]] == 0) // significa que ainda não passou por esse char
         {
             tam_char++;
         }
-        index = (int)seqB[i];
+        index = (int)seqB.texto[i];
         seq_char[index] = 1;
     }
 
@@ -60,12 +60,13 @@ t_sequencia tam_char_seq(char *seqA, char *seqB, int *seq_char)
     }
     s.tam = tam_char;
     s.texto[s.tam + 1] = '\0';
+    printf("%s \n", s.texto);
 
     return s;
 }
 
 // sequencia b para calculo do caracteres unicos
-t_sequencia calc_char_unicos(char *sequenciaA, char *sequenciaB)
+t_sequencia calc_char_unicos(t_sequencia sequenciaA, t_sequencia sequenciaB)
 {
     int *seq_char = calloc(TAM_MAX_CHAR, sizeof(int));
 
@@ -116,11 +117,11 @@ t_sequencia ler_entrada(char *filename)
     return s;
 }
 
-int indice_char_unico(char *str, char x, int len)
+int indice_char_unico(t_sequencia C, char x)
 {
-    for (int i = 0; i < len; i++)
+    for (int i = 0; i < C.tam; i++)
     {
-        if (str[i] == x)
+        if (C.texto[i] == x)
         {
 
             return i;
@@ -129,14 +130,14 @@ int indice_char_unico(char *str, char x, int len)
     return -1;
 }
 
-void calc_matriz_P(int **P, char *b, long len_b, char *c, long len_c)
+void calc_matriz_P(int **P, t_sequencia B, t_sequencia C)
 {
 #pragma omp parallel for
-    for (int i = 0; i < len_c; i++)
+    for (int i = 0; i < C.tam; i++)
     {
-        for (int j = 1; j < len_b + 1; j++)
+        for (int j = 1; j < B.tam + 1; j++)
         {
-            if (b[j - 1] == c[i])
+            if (B.texto[j - 1] == C.texto[i])
             {
                 P[i][j] = j;
             }
@@ -152,7 +153,7 @@ int calc_dif_distancia(int *atual, int *anterior, int **P, t_sequencia A, t_sequ
 {
     for (int i = 1; i < A.tam + 1; i++)
     {
-        int c_i = indice_char_unico(C.texto, A.texto[i - 1], C.tam);
+        int c_i = indice_char_unico(C, A.texto[i - 1]);
         int t, s;
 
 #pragma omp parallel for private(t, s) schedule(static)
@@ -215,14 +216,14 @@ int main(int argc, char *argv[])
 
     sequenciaB = ler_entrada(argv[2]);
 
-    sequenciaC = calc_char_unicos(sequenciaA.texto, sequenciaB.texto);
+    sequenciaC = calc_char_unicos(sequenciaA, sequenciaB);
 
     printf("Tamanho da sequencia A: %ld bp\n", sequenciaA.tam);
     printf("Tamanho da sequencia B: %ld bp\n", sequenciaB.tam);
 
     // printf("\n##################################\n");
     printf("\n######## Resultados ########\n");
-    omp_set_num_threads(NUM_THREADS);
+    // omp_set_num_threads(NUM_THREADS);
 
 #pragma omp parallel
     {
@@ -243,7 +244,7 @@ int main(int argc, char *argv[])
     }
 
     start_time = omp_get_wtime();
-    calc_matriz_P(P_Matrix, sequenciaB.texto, sequenciaB.tam, sequenciaC.texto, sequenciaC.tam);
+    calc_matriz_P(P_Matrix, sequenciaB, sequenciaC);
 
     int res = calc_dif_distancia(linha_atual, linha_ant, P_Matrix, sequenciaA, sequenciaB, sequenciaC);
 
