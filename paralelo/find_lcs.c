@@ -7,9 +7,13 @@
 
 // tamanho tabela ASCII para possíveis entradas
 #define TAM_MAX_CHAR 256
-#define NUM_THREADS 4
+#define NUM_THREADS 6
 #define max(x, y) ((x) > (y) ? (x) : (y))
-
+int *P_Matrix;
+char *string_A;
+char *string_B;
+char *unique_chars_C; // unique alphabets
+int c_len;
 typedef struct sequencia
 {
     char *texto;
@@ -19,9 +23,9 @@ typedef struct sequencia
 t_sequencia tam_char_seq(t_sequencia seqA, t_sequencia seqB, int *seq_char);
 t_sequencia ler_entrada(char *filename);
 int indice_char_unico(t_sequencia C, char x);
-void calc_matriz_P(int **P, t_sequencia B, t_sequencia C);
-int calc_dif_distancia(int *atual, int *anterior, int **P, t_sequencia A, t_sequencia B, t_sequencia C);
-int lcs(int *DP, int *prev_row, t_sequencia a, t_sequencia b);
+void calc_matriz_P(int *P, t_sequencia b, t_sequencia c);
+int calc_dif_distancia(int *atual, int *anterior, int *P, t_sequencia A, t_sequencia B, t_sequencia C);
+int lcs(int *DP, int *anterior, t_sequencia a, t_sequencia b);
 
 t_sequencia tam_char_seq(t_sequencia seqA, t_sequencia seqB, int *seq_char)
 {
@@ -130,51 +134,54 @@ int indice_char_unico(t_sequencia C, char x)
     return -1;
 }
 
-void calc_matriz_P(int **P, t_sequencia B, t_sequencia C)
+void calc_matriz_P(int *P, t_sequencia b, t_sequencia c)
 {
 #pragma omp parallel for
-    for (int i = 0; i < C.tam; i++)
+    for (int i = 0; i < c.tam; i++)
     {
-        for (int j = 1; j < B.tam + 1; j++)
+        for (int j = 1; j < b.tam + 1; j++)
         {
-            if (B.texto[j - 1] == C.texto[i])
+            if (b.texto[j - 1] == c.texto[i])
             {
-                P[i][j] = j;
+                P[(i * (b.tam + 1)) + j] = j;
             }
             else
             {
-                P[i][j] = P[i][j - 1];
+                P[(i * (b.tam + 1)) + j] = P[(i * (b.tam + 1)) + (j - 1)];
             }
         }
     }
 }
 
-int calc_dif_distancia(int *atual, int *anterior, int **P, t_sequencia A, t_sequencia B, t_sequencia C)
+int calc_dif_distancia(int *atual, int *anterior, int *P, t_sequencia A, t_sequencia B, t_sequencia C)
 {
+    int *aux;
+    int posicao_aux;
+
     for (int i = 1; i < A.tam + 1; i++)
     {
         int c_i = indice_char_unico(C, A.texto[i - 1]);
-        int t, s;
 
-#pragma omp parallel for private(t, s) schedule(static)
-        for (int j = 0; j < B.tam + 1; j++)
+#pragma omp parallel for private(posicao_aux) schedule(static)
+        for (int j = 1; j < B.tam + 1; j++)
         {
-            t = (0 - P[c_i][j]) < 0;
-            s = (0 - (anterior[j] - (t * anterior[P[c_i][j] - 1])));
-            atual[j] = ((t ^ 1) || (s ^ 0)) * (anterior[j]) + (!((t ^ 1) || (s ^ 0))) * (anterior[P[c_i][j] - 1] + 1);
+            posicao_aux = P[(c_i * (B.tam + 1) + j)];
+            if (posicao_aux == 0)
+            {
+                atual[j] = anterior[j];
+            }
+            atual[j] = max(anterior[j], anterior[posicao_aux - 1] + 1);
         }
 
-#pragma omp parallel for schedule(static)
-        for (int j = 0; j < B.tam + 1; j++)
-        {
-            anterior[j] = atual[j];
-        }
+        aux = anterior;
+        anterior = atual;
+        atual = aux;
     }
 
     return atual[B.tam];
 }
 
-int lcs(int *DP, int *prev_row, t_sequencia a, t_sequencia b)
+int lcs(int *DP, int *anterior, t_sequencia a, t_sequencia b)
 {
     for (int i = 1; i < (a.tam + 1); i++)
     {
@@ -182,17 +189,17 @@ int lcs(int *DP, int *prev_row, t_sequencia a, t_sequencia b)
         {
             if (a.texto[i - 1] == b.texto[j - 1])
             {
-                DP[j] = prev_row[j - 1] + 1;
+                DP[j] = anterior[j - 1] + 1;
             }
             else
             {
-                DP[j] = max(prev_row[j], DP[j - 1]);
+                DP[j] = max(anterior[j], DP[j - 1]);
             }
         }
 
         for (int j = 0; j < b.tam + 1; j++)
         {
-            prev_row[j] = DP[j];
+            anterior[j] = DP[j];
         }
     }
 
@@ -207,15 +214,17 @@ int main(int argc, char *argv[])
     t_sequencia sequenciaC;
     int *linha_atual;
     int *linha_ant;
-
-    int **P_Matrix;
+    int n_threads = 0;
     double start_time,
         stop_time;
 
     sequenciaA = ler_entrada(argv[1]);
 
     sequenciaB = ler_entrada(argv[2]);
-
+    if (argv[3] != NULL)
+    {
+        n_threads = atoi(argv[3]);
+    }
     sequenciaC = calc_char_unicos(sequenciaA, sequenciaB);
 
     printf("Tamanho da sequencia A: %ld bp\n", sequenciaA.tam);
@@ -223,7 +232,12 @@ int main(int argc, char *argv[])
 
     // printf("\n##################################\n");
     printf("\n######## Resultados ########\n");
-    // omp_set_num_threads(NUM_THREADS);
+    if (n_threads != 0)
+    {
+        omp_set_num_threads(n_threads);
+    }
+    else
+        omp_set_num_threads(NUM_THREADS);
 
 #pragma omp parallel
     {
@@ -233,15 +247,11 @@ int main(int argc, char *argv[])
         }
     }
 
-    linha_atual = (int *)malloc((sequenciaB.tam + 1) * sizeof(int));
-    linha_ant = (int *)malloc((sequenciaB.tam + 1) * sizeof(int));
+    linha_atual = calloc((sequenciaB.tam + 1), sizeof(int));
+    linha_ant = calloc((sequenciaB.tam + 1), sizeof(int));
 
     // allocate memory for P_Matrix array
-    P_Matrix = (int **)malloc(sequenciaC.tam * sizeof(int *));
-    for (int k = 0; k < sequenciaC.tam; k++)
-    {
-        P_Matrix[k] = (int *)calloc((sequenciaB.tam + 1), sizeof(int));
-    }
+    P_Matrix = calloc((sequenciaC.tam * (sequenciaB.tam + 1)), sizeof(int *));
 
     start_time = omp_get_wtime();
     calc_matriz_P(P_Matrix, sequenciaB, sequenciaC);
