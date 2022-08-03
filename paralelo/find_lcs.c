@@ -234,18 +234,19 @@ int main(int argc, char *argv[])
     // printf("\n######## Resultados ########\n");
     if (n_threads != 0)
     {
+
         omp_set_num_threads(n_threads);
     }
     else
         omp_set_num_threads(NUM_THREADS);
 
-    // #pragma omp parallel
-    //     {
-    // #pragma omp single
-    //         {
-    //             printf("Número de threads: %d\n", omp_get_num_threads());
-    //         }
-    //     }
+#pragma omp parallel
+    {
+#pragma omp single
+        {
+            printf("Número de threads: %d\n", omp_get_num_threads());
+        }
+    }
 
     linha_atual = calloc((sequenciaB.tam + 1), sizeof(int));
     linha_ant = calloc((sequenciaB.tam + 1), sizeof(int));
