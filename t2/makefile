@@ -1,56 +1,22 @@
-# Sample MPI Makefile
-
-###############################################
-# Change these files names to match your own: #
-###############################################
-
-# name of the executable to be generated
-PROG = row_wise_v2
-# space-delimited list of header files
-HDRS =
-# space-delimited list of source files
-SRCS = row_wise_v2.c 
-
-#######################
-# Don't change these: #
-#######################
-
-# directory to store object files
-OBJDIR = object
-# names of object files
-OBJS = $(patsubst %.c, $(OBJDIR)/%.o, $(SRCS)) 
-
-# name of the compiler
 CC = mpicc
-# additional compiler flags to pass in
-CFLAGS = -Wall --std=c99 -L.
-# libraries for the linker
-LIBS = -lm
+#flags para warning, depuração e biblioteca de matematica
+CFLAGS = -Wall --std=c99 -L. -lm
 
-####################
-# Compiling rules: #
-####################
-# WARNING: *must* have a tab before each definition
+#regras de ligação
+lcs = lcs_mpi.o
 
-# invoked when "make" is run
-all : $(OBJDIR) $(PROG)
+%.o: %.c
+	$(CC) -c -o $@ $< $(CFLAGS) 
 
-# links object files into executable
-$(PROG) : $(OBJS)
-	$(CC) $(CFLAGS) $^ -o $(PROG) $(LIBS)
+#variavel geral
+all: lcs_mpi
+#regras de compilação
+lcs_mpi: $(lcs)
+	$(CC) -o $@ $^ $(CFLAGS) 
 
-# compiles source files into object files
-object/%.o : %.c $(HDRS)
-	$(CC) -c $(CFLAGS) $< -o $@ $(LIBS)
+.PHONY:	clean
+#remove os arquivos temporarios e executaveis
+clean: 
 
-# creates directory to store object files
-$(OBJDIR) :
-	mkdir -p $@/
-
-# cleans up object files and executable
-# type "make clean" to use
-# Note: you can add your own commands to remove other things (e.g. output files)
-clean:
-	rm -rf object/
-	rm -f $(PROG)
-	rm -rf output.txt
+	rm *.o lcs_mpi 
+	
