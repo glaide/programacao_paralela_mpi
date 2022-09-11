@@ -163,7 +163,7 @@ int lcs_yang_v2(int *atual, int *anterior, int *P, char *A, char *B, char *C, in
     atual = anterior;
     anterior = temp;
 
-    return linha_atual[n];
+    return atual[n];
 }
 
 int lcs(int **DP, char *A, char *B, int m, int n)
