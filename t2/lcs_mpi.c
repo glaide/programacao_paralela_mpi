@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
     int *atual = (int *)calloc((len_b + 1), sizeof(int));
     int *anterior = (int *)calloc((len_b + 1), sizeof(int));
 
-    P_Matrix = (int *)calloc((c_len, (len_b + 1)) * sizeof(int));
+    P_Matrix = (int *)calloc((c_len * (len_b + 1)), sizeof(int));
 
     start_time_yang = MPI_Wtime();
 
