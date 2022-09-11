@@ -122,14 +122,14 @@ int lcs_yang_v2(int *atual, int *anterior, int *P, char *A, char *B, char *C, in
 
         for (; j < end_id; j++)
         {
-            p_c_j = matrizP[c * (n + 1) + j];
+            p_c_j = P[c * (n + 1) + j];
             if (p_c_j)
             {
-                dp_i_receive[j - start_id] = max(linha_anterior[j], linha_anterior[p_c_j - 1] + 1);
+                dp_i_receive[j - start_id] = max(anterior[j], anterior[p_c_j - 1] + 1);
             }
             else
             {
-                dp_i_receive[j - start_id] = linha_anterior[j];
+                dp_i_receive[j - start_id] = anterior[j];
             }
         }
 
@@ -139,15 +139,15 @@ int lcs_yang_v2(int *atual, int *anterior, int *P, char *A, char *B, char *C, in
         {
             for (j = n + 1 - resto; j < n + 1; j++)
             {
-                p_c_j = matrizP[c * (n + 1) + j];
+                p_c_j = P[c * (n + 1) + j];
                 if (p_c_j)
                 {
-                    linha_atual[j] = max(linha_anterior[j], linha_anterior[p_c_j - 1] + 1);
+                    atual[j] = max(anterior[j], anterior[p_c_j - 1] + 1);
                 }
                 else
                 {
 
-                    linha_atual[j] = linha_anterior[j];
+                    atual[j] = anterior[j];
                 }
             }
         }
