@@ -1,7 +1,260 @@
-make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --question
-'\\wsl.localhost\Ubuntu-20.04\home\glaide\paralela\paralela_t1'
-CMD.EXE was started with the above path as the current directory.
-UNC paths are not supported.  Defaulting to Windows directory.
-'make.exe' is not recognized as an internal or external command,
-operable program or batch file.
+make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 3.81
+# Copyright (C) 2006  Free Software Foundation, Inc.
+# This is free software; see the source for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
 
+# This program built for i386-apple-darwin11.3.0
+
+# Make data base, printed on Sun Sep 11 16:45:20 2022
+
+# Variables
+
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# automatic
+@F = $(notdir $@)
+# makefile
+CURDIR := /Users/glaideoliveira/Documents/estudos/paralela
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
+# environment
+_ = /usr/bin/make
+# makefile
+MAKEFILE_LIST := 
+# environment
+SCALA_HOME = /Users/glaideoliveira/.sdkman/candidates/scala/current
+# environment
+CFPKEY = LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tDQpNSUlFdlFJQkFEQU5CZ2txaGtpRzl3MEJBUUVGQUFTQ0JLY3dnZ1NqQWdFQUFvSUJBUUNVQUViRWFFcVF3aGJYDQpJZGljN3ZpcHhjNlhWNkhZbDgxNFIvY2VGcFB6QzdveWtNTmFDRUNNVHc3NXk2TEtGVVZ0TjRQNStsU3V6cmsyDQp4RFVwYThvZjUvWms5clFQc09Nem5HQnpaWUNNODVmeWtzWFNTSGtJZkQ5TFlzelhFSDRmVVRta1NSTUV2OU5sDQordFZKZW9nQ3JtaGdPcllFenRNS3FpcjlJUWhlYld4eEIyVGVrOFVqdFg1Z0QxUlVpNVZkOXBSd0J5MDh1SmMzDQpVT2dhY3k1ZGFpTTlPeVMrdEVaNkp5Y1ZJRldZYi9wTkJYZXFObE9iR01RSmx2ZUFHZXR4emlMTkN6MGU4RTVUDQo0SFV3SG0zVWw3ZVg2ODg0Ky92UGMyU0l6WG5RWVRJaXUzVFgzbExaMkJUclYzc25EczZrMGtsUWJudDhhUjZZDQpVbm8yM2lKWEFnTUJBQUVDZ2dFQUtuWWIxNHkrVytLN2I5UnZrN0xDRjk4L0FzK3JDUHVnZ1JKUWxVclAvcXFPDQpMS1M0ejFOUHhaR0hEK2E3R1RSYUcxZ1NucjBSMzZkQ256SlN1RVFMRlBWVmpTajBodzN1V1dmVGlqZ0VWaXdyDQpHM2E5bDdPZ09lMS9zVTZ5eXo4Wm1EMlRCbzNLalpIRmdsd2hKamduM25FUVZBOTBHbFFHVzJodjlmaXNzSDVQDQpwejYweWE3aVQ3ait1TFBHWk9wV1F5Z0lVSk8rSElReVNPNlVhYXl2Yzk4bmFpUU9hdWRLOW9iS2c4MEhBclgyDQpBL3dXektXcWkxd2VPbk1GeXFyck1TUU12eUlZd1FqZ2hEUWNFcTBtY1ZvK0M0V0dIWjNFR3pBWnVmVm1YdEs2DQpkQVh1eVNXVzdURnVWZi8xSUFyR1lwc1Y1amkyMFl0ejQ2UGZGUUhmeVFLQmdRREc3OGxkd2FMdlo5YUhsWlZSDQphZmpuZ2Zoa2FmUnZBV09XdiswRDY1aGRqMkZHbDFpRUxKcWw5ckYxd04wOWV5VWcwQjNZMWd4akZHVkRSaWN5DQpYeWpkY2xQMExISlNEaFBxRG5hNERlYnNwYUpCcU5yQUM5MHJYOTJiZ0w2Z1lhSEdtdXgyb29PSlE3V1JFSEU1DQpkaVQrN2J6aWtnR0xLUkw0MzkyMjNGN1BHUUtCZ1FDK2REYm1WNzRWa3ZyMUtVWEdlNHRwdXBxNmwwNU9uRm1QDQpEb1ZZbFRMdWVuaEZjbktJUzVxL3FTZ2p6N2VwMC9ZVUEzMWRDeTB5b20wbEtvcUtnem9hS1k4QVZ3WGE1V0VDDQppLy9Ydlo0bnBsZGVlbUlpMEhUMFlYTWZRenBkcXRTUGloQTlYSXA1UmZhdU5NVDZ0VXErOFY3bktrYmlPdkt1DQpyTGRiMzJ4YTd3S0JnRkZPL0R5SHdqS2JmRUZhVC9kQW11ejBZRE9hWXI5a0QvSXphNG9vcHRQR29IbWJyaUFIDQpvd1dtT0kzcVVBS3E3RmZtOSt3Q1FIbldnalRtM1dwbkhtcTBLY0FvMG1qYlBDUnoyTzROTUk4VWU2YmVmdG56DQpmMmdVL0p4c0dIMndxZEJremJVSFl6K2RIdjYxZTdHQ3FraFBudDN6MHhHdnJnTnViRTRxNzgweEFvR0FDRFRwDQp5TE12TmE3SHNaaTlzUGZSNGhSd1ptbnVyZVIrMTNOQXU3aHlJV1NWbWloOFZ2TXJEK2N5RzVqdnlSbWhHT3V0DQprenpRRGNhQi9YLy95RWd2VU1GSnNESVB4b2JyenpoSkpmcTl2ZWVsRENVcDVXWW1KQUd1L0VIaFdmZnFnT1RxDQpIanJHbk1NdkJnS3dHajJGb3dTem1qSndLMzl1eGFnYm5wSGFFWEVDZ1lFQXFZbkltSEcxYTFCMk43S2I2azZ5DQp0d0owcnV5L3RlYmJ0NjhGam5kL1FuZ05VMmc4SFFnYmxRZlc0S3ZWcW9POENkb3dGWE5FcWduMzV3djU1TDZIDQpjNjJJdTNiNjVIMjFyUjJuRElzc0kxSzhnbE9RWElYYnlOMFZCTmcwYmdXZjg1NlNLZWUzcExCM2dlNEZXTnF4DQpTb1JpL0hwT0FPcisyRlU5d2cyRDUzcz0NCi0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0=
+# environment
+__CFBundleIdentifier = com.microsoft.VSCode
+# environment
+INFOPATH = /opt/homebrew/share/info:
+# environment
+VSCODE_CWD = /
+# environment
+PATH = /Users/glaideoliveira/.sdkman/candidates/scala/current/bin:/Users/glaideoliveira/.rbenv/shims:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/glaideoliveira/.sdkman/candidates/java/current/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Library/Apple/usr/bin:/Users/glaideoliveira/Documents/flutter/bin:/Users/glaideoliveira/Library/Android/sdk/emulator:/Users/glaideoliveira/Library/Android/sdk/tools:/Users/glaideoliveira/Library/Android/sdk/tools/bin:/Users/glaideoliveira/Library/Android/sdk/platform-tools
+# environment
+LSCOLORS = Gxfxcxdxbxegedabagacad
+# environment
+SDKMAN_DIR = /Users/glaideoliveira/.sdkman
+# environment
+SDKMAN_CANDIDATES_API = https://api.sdkman.io/2
+# environment
+SDKMAN_PLATFORM = darwinx64
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# environment
+ANDROID_HOME = /Users/glaideoliveira/Library/Android/sdk
+# default
+.FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
+# environment
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.wY5cleZ7dl/Listeners
+# automatic
+%F = $(notdir $%)
+# environment
+PWD = /Users/glaideoliveira/Documents/estudos/paralela
+# environment
+HOMEBREW_CELLAR = /opt/homebrew/Cellar
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+CFCERT = LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tDQpNSUlFRlRDQ0F2MmdBd0lCQWdJVVJyanRXN2Qwd1EvT2VOS1FHaWg3cTYzd00xd3dEUVlKS29aSWh2Y05BUUVMDQpCUUF3Z2FneEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUlFd3BEWVd4cFptOXlibWxoTVJZd0ZBWURWUVFIDQpFdzFUWVc0Z1JuSmhibU5wYzJOdk1Sa3dGd1lEVlFRS0V4QkRiRzkxWkdac1lYSmxMQ0JKYm1NdU1Sc3dHUVlEDQpWUVFMRXhKM2QzY3VZMnh2ZFdSbWJHRnlaUzVqYjIweE5EQXlCZ05WQkFNVEswMWhibUZuWldRZ1EwRWdaVEUyDQpNMlEyTVRZMk1HTXdaV1ZoWW1NeU16UTRPRGMzT1RnNVpUVmtaRFF3SGhjTk1qSXdOakE1TVRVd05qQXdXaGNODQpNak13TmpBNU1UVXdOakF3V2pBaU1Rc3dDUVlEVlFRR0V3SlZVekVUTUJFR0ExVUVBeE1LUTJ4dmRXUm1iR0Z5DQpaVENDQVNJd0RRWUpLb1pJaHZjTkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFKUUFSc1JvU3BEQ0Z0Y2gySnp1DQorS25GenBkWG9kaVh6WGhIOXg0V2svTUx1aktRdzFvSVFJeFBEdm5Mb3NvVlJXMDNnL242Vks3T3VUYkVOU2xyDQp5aC9uOW1UMnRBK3c0ek9jWUhObGdJenpsL0tTeGRKSWVRaDhQMHRpek5jUWZoOVJPYVJKRXdTLzAyWDYxVWw2DQppQUt1YUdBNnRnVE8wd3FxS3YwaENGNXRiSEVIWk42VHhTTzFmbUFQVkZTTGxWMzJsSEFITFR5NGx6ZFE2QnB6DQpMbDFxSXowN0pMNjBSbm9uSnhVZ1ZaaHYrazBGZDZvMlU1c1l4QW1XOTRBWjYzSE9JczBMUFI3d1RsUGdkVEFlDQpiZFNYdDVmcnp6ajcrODl6WklqTmVkQmhNaUs3ZE5mZVV0bllGT3RYZXljT3pxVFNTVkJ1ZTN4cEhwaFNlamJlDQpJbGNDQXdFQUFhT0J1ekNCdURBVEJnTlZIU1VFRERBS0JnZ3JCZ0VGQlFjREFqQU1CZ05WSFJNQkFmOEVBakFBDQpNQjBHQTFVZERnUVdCQlROa1BFUFZrTlJQdUJ0UUxaV2xXaWJ6bDdGclRBZkJnTlZIU01FR0RBV2dCUkZKczhaDQpMK1VaZHpmYjY4UzVSSmpNSjBEOFh6QlRCZ05WSFI4RVREQktNRWlnUnFCRWhrSm9kSFJ3T2k4dlkzSnNMbU5zDQpiM1ZrWm14aGNtVXVZMjl0THpnMk16ZGhOemc1TFdNd1ltWXRORFU1WWkxaVlUSXlMVFV4WlRVeVkyTm1aR0UyDQpZUzVqY213d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFFM084QjhVMWpOMnpZaVJuUkJjOUVlMjN1WlgyTlB4DQpyV0Fqb05pY2NyK1JTdjhpS093emp3UTJqUEtNMVBFK3ZuZjdUNXNLQ2FlMXQ5OHpRaFN0U3RDV3pmRis1RGUyDQpZMGMrRUJDM0ZxdGlBTHRCc3ZybXBaNmtsSnVNYitud3pHcG1pV2d4dEcvaXc2RHhOMDZMdFAzWUJ5QTkwRE16DQozTlFpSW1jUGR0QW4xNzlacXRxU0s1UjUyNnVJNytFdjVnWkZmV1oxODZvN2lBNDlCcGxmbDNHQTQzOHZrYkZiDQphMWZSYlhseHl5TTFsWE5rZ1Q5U2dSM1lqc0hBd0lLQjBtOEtwNmxieE1LWGZaNFY5cVkrOENLT3p6SDFMOEI0DQp1RWNiWEJYQTR4NnRlS2tkTUQ4TmIyVXhlYXovazhMZURqQjJyQ1pKSG5jZUFsT1l1N2tmK1ZnPQ0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ==
+# environment
+MANPATH = /opt/homebrew/share/man::
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+HOME = /Users/glaideoliveira
+# default
+MAKEFILEPATH := /Applications/Xcode.app/Contents/Developer/Makefiles
+# environment
+VSCODE_CODE_CACHE_PATH = /Users/glaideoliveira/Library/Application Support/Code/CachedData/b06ae3b2d2dbfe28bca3134cc6be65935cdfea6a
+# environment
+LOGNAME = glaideoliveira
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# environment
+ZSH = /Users/glaideoliveira/.oh-my-zsh
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+XPC_FLAGS = 0x0
+# environment
+SDKMAN_VERSION = 5.12.4
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := all
+# environment
+ANDROID_NDK_HOME = /Users/glaideoliveira/Library/Android/sdk/ndk/23.0.7599858
+# environment
+SHLVL = 1
+# environment
+JAVA_HOME = /Users/glaideoliveira/.sdkman/candidates/java/current
+# default
+MAKE_VERSION := 3.81
+# environment
+USER = glaideoliveira
+# makefile
+.DEFAULT_GOAL := 
+# environment
+LESS = -R
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# default
+MAKE_COMMAND := /Applications/Xcode.app/Contents/Developer/usr/bin/make
+# default
+.VARIABLES := 
+# environment
+TMPDIR = /var/folders/3k/t2cd3sfd5qzf011y6l5khhdh0000gn/T/
+# automatic
+*F = $(notdir $*)
+# environment
+VSCODE_IPC_HOOK = /Users/glaideoliveira/Library/Application Support/Code/1.69.1-main.sock
+# environment
+MallocNanoZone = 0
+# makefile
+MAKEFLAGS = Rrqp
+# environment
+MFLAGS = -Rrqp
+ 
+make: *** No rule to make target `all'.  Stop.
+
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.36351930.36351936
+# environment
+HOMEBREW_PREFIX = /opt/homebrew
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# automatic
++F = $(notdir $+)
+# environment
+HOMEBREW_REPOSITORY = /opt/homebrew
+# environment
+__CF_USER_TEXT_ENCODING = 0x1F5:0x0:0x0
+# environment
+COMMAND_MODE = unix2003
+# default
+MAKEFILES := 
+# environment
+RBENV_SHELL = zsh
+# automatic
+<F = $(notdir $<)
+# environment
+SDKMAN_CANDIDATES_DIR = /Users/glaideoliveira/.sdkman/candidates
+# environment
+PAGER = less
+# environment
+LC_ALL = C
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# default
+.INCLUDE_DIRS = /usr/local/include
+# environment
+MAKELEVEL := 0
+# environment
+LANG = C
+# environment
+VSCODE_PID = 90598
+# variable set hash-table stats:
+# Load=79/1024=8%, Rehash=0, Collisions=2/100=2%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 16777232, inode 43689412): 10 files, no impossibilities.
+
+# 10 files, no impossibilities in 1 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+# Not a target:
+all:
+#  Command-line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  A default, MAKEFILES, or -include/sinclude makefile.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+makefile:
+#  A default, MAKEFILES, or -include/sinclude makefile.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+GNUmakefile:
+#  A default, MAKEFILES, or -include/sinclude makefile.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# files hash-table stats:
+# Load=6/1024=1%, Rehash=0, Collisions=0/17=0%
+# VPATH Search Paths
+
+# No `vpath' search paths.
+
+# No general (`VPATH' variable) search path.
+
+# # of strings in strcache: 0
+# # of strcache buffers: 0
+# strcache size: total = 0 / max = 0 / min = 4096 / avg = 0
+# strcache free: total = 0 / max = 0 / min = 4096 / avg = 0
+
+# Finished Make data base on Sun Sep 11 16:45:20 2022
+
+ 
