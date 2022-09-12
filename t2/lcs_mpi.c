@@ -4,101 +4,107 @@
 #include "mpi.h"
 #include <time.h>
 // macros
-#define TAM_C_UNICOS 500
+#define TAM_MAX_CHAR 256 // tabela ascii
 #define max(x, y) ((x) > (y) ? (x) : (y))
+typedef struct sequencia
+{
+    char *texto;
+    long tam;
+} t_sequencia;
 
 // function prototypes
 int indice(char *str, char x, int len);
 void print_matrix(int *x, int row, int col);
-int lcs(int *atual, int *anterior, int *P, char *A, char *B, char *C, int len_a, int len_b, int len_c, int myrank, int chunk_size, int resto);
-void inicia_matriz_p(int *P, char *b, int len_b, char *c, int len_c, int myrank, int chunk_size, int resto);
+int lcs(int *atual, int *anterior, int *P, t_sequencia seqA, t_sequencia seqB, t_sequencia seqC, int myrank, int chunk_size, int resto);
+void inicia_matriz_p(int *P, int myrank, t_sequencia seqB, t_sequencia seqC, int chunk_size, int resto);
+t_sequencia calc_char_unicos(t_sequencia sequenciaA, t_sequencia sequenciaB);
+t_sequencia ler_entrada(char *filename);
 
-char *string_char_unicos(char *seqA, char *seqB)
+t_sequencia calc_char_unicos(t_sequencia seqA, t_sequencia seqB)
 {
-    // Aloca um array com todos os possíveis chars que possamos ter de entrada (2⁸)
-    int *charsetC = calloc(TAM_C_UNICOS, sizeof(int));
-    int sizeC = 0;
-    // leio a seqB e separo seu chars únicos escrevendo 1 em sua posição de mem. equivalente em charsetC
-    for (int i = 0; i < strlen(seqA); i++)
+    int tam_char = 0;
+    int index, index2 = 0;
+    int *seq_char = calloc(TAM_MAX_CHAR, sizeof(int));
+
+    t_sequencia s;
+
+    for (int i = 0; i > seqA.tam; i++)
     {
-        if (charsetC[(int)seqA[i]] == 0)
+        index = (int)seqA.texto[i];
+        if (seq_char[index] == 0) // significa que ainda não passou por esse char
         {
-            sizeC += 1; // contabiliza o num. de chars diferentes existentes
+            tam_char++;
         }
-        charsetC[(int)seqA[i]] = 1;
-    }
-    // faço o mesmo para a seqB
-    for (int i = 0; i < strlen(seqB); i++)
-    {
-        if (charsetC[(int)seqB[i]] == 0)
-        {
-            sizeC += 1;
-        }
-        charsetC[(int)seqB[i]] = 1;
+        seq_char[index] = 1;
     }
 
-    // aloco espaço para a string C e coloco seus valores (será sempre < 256)
-    char *seqC = calloc(sizeC, sizeof(char));
-    int j = 0;
-    for (int i = 0; i < TAM_C_UNICOS; i++)
+    for (int i = 0; i < seqB.tam; i++)
     {
-        if (charsetC[i] == 1)
+        index2 = (int)seqB.texto[i];
+        if (seq_char[index2] == 0) // significa que ainda não passou por esse char
         {
-            seqC[j] = i;
+            tam_char++;
+        }
+        seq_char[index2] = 1;
+    }
+
+    s.texto = calloc(tam_char + 1, sizeof(char));
+    s.tam = tam_char;
+
+    int j = 0;
+    for (int i = 0; i < TAM_MAX_CHAR + 1; i++)
+    {
+        if (seq_char[i] == 1)
+        {
+            s.texto[j] = i;
             j++;
         }
     }
 
-    return seqC;
+    return s;
 }
 
-char *read_seq(char *fname)
+t_sequencia ler_entrada(char *filename)
 {
-    // file pointer
-    FILE *fseq = NULL;
-    // sequence size
-    long size = 0;
-    // sequence pointer
-    char *seq = NULL;
-    // sequence index
+    FILE *arquivo_sequencia = NULL;
     int i = 0;
+    arquivo_sequencia = fopen(filename, "rt");
+    t_sequencia s;
 
-    // open file
-    fseq = fopen(fname, "rt");
-    if (fseq == NULL)
+    if (arquivo_sequencia == NULL)
     {
-        printf("Error reading file %s\n", fname);
+        printf("Erro ao ler o arquivo: %s\n", filename);
         exit(1);
     }
 
-    // find out sequence size to allocate memory afterwards
-    fseek(fseq, 0, SEEK_END);
-    size = ftell(fseq);
-    rewind(fseq);
+    // verifica o tamanho da arquivo_sequencia
+    fseek(arquivo_sequencia, 0L, SEEK_END);
+    // salva o tamanho da arquivo_sequencia
+    s.tam = ftell(arquivo_sequencia);
+    // volta o arquivo para o inicio
+    rewind(arquivo_sequencia);
 
-    // allocate memory (sequence)
-    seq = (char *)calloc(size + 1, sizeof(char));
-    if (seq == NULL)
+    // aloca memoria para salvar valor da sequencia
+
+    s.texto = (char *)calloc(s.tam + 1, sizeof(char));
+    if (s.texto == NULL)
     {
-        printf("Erro allocating memory for sequence %s.\n", fname);
+        printf("Erro ao alocar memória da sequencia");
         exit(1);
     }
 
+    // leitura da sequencia
     // read sequence from file
-    while (!feof(fseq))
+    while (!feof(arquivo_sequencia))
     {
-        seq[i] = fgetc(fseq);
-        if ((seq[i] != '\n') && (seq[i] != EOF))
+        s.texto[i] = fgetc(arquivo_sequencia);
+        if ((s.texto[i] != '\n') && (s.texto[i] != EOF))
             i++;
     }
-    // insert string terminator
-    seq[i] = '\0';
 
-    // close file
-    fclose(fseq);
-
-    // return sequence pointer
-    return seq;
+    // fecha o arquivo
+    fclose(arquivo_sequencia);
+    return s;
 }
 
 int indice(char *str, char x, int len)
@@ -110,7 +116,7 @@ int indice(char *str, char x, int len)
             return i;
         }
     }
-    return -1; // not found the character x in str
+    return 0; // not found the character x in str
 }
 
 void print_matrix(int *x, int row, int col)
@@ -125,60 +131,60 @@ void print_matrix(int *x, int row, int col)
     }
 }
 
-void inicia_matriz_p(int *P, char *b, int len_b, char *c, int len_c, int myrank, int chunk_size, int resto)
+void inicia_matriz_p(int *P, int myrank, t_sequencia seqB, t_sequencia seqC, int chunk_size, int resto)
 {
     char string_c_scatter[chunk_size];
-    int scatter[chunk_size * (len_b + 1)];
+    int scatter[chunk_size * (seqB.tam + 1)];
 
-    MPI_Scatter(c, chunk_size, MPI_CHAR, &string_c_scatter, chunk_size, MPI_CHAR, 0, MPI_COMM_WORLD);
+    MPI_Scatter(seqC.texto, chunk_size, MPI_CHAR, &string_c_scatter, chunk_size, MPI_CHAR, 0, MPI_COMM_WORLD);
 
-    MPI_Scatter(P, chunk_size * (len_b + 1), MPI_INT, &scatter, chunk_size * (len_b + 1), MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Scatter(P, chunk_size * (seqB.tam + 1), MPI_INT, &scatter, chunk_size * (seqB.tam + 1), MPI_INT, 0, MPI_COMM_WORLD);
 
-    MPI_Bcast(b, len_b, MPI_CHAR, 0, MPI_COMM_WORLD);
+    MPI_Bcast(seqB.texto, seqB.tam, MPI_CHAR, 0, MPI_COMM_WORLD);
 
     int i, j;
     for (i = 0; i < chunk_size; i++)
     {
-        for (j = 1; j < len_b + 1; j++)
+        for (j = 1; j < seqB.tam + 1; j++)
         {
-            if (b[j - 1] == string_c_scatter[i])
+            if (seqB.texto[j - 1] == string_c_scatter[i])
             {
-                scatter[i * (len_b + 1) + j] = j;
+                scatter[i * (seqB.tam + 1) + j] = j;
             }
             else
             {
-                scatter[i * (len_b + 1) + j] = scatter[i * (len_b + 1) + j - 1];
+                scatter[i * (seqB.tam + 1) + j] = scatter[i * (seqB.tam + 1) + j - 1];
             }
         }
     }
 
-    MPI_Gather(scatter, chunk_size * (len_b + 1), MPI_INT, P, chunk_size * (len_b + 1), MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Gather(scatter, chunk_size * (seqB.tam + 1), MPI_INT, P, chunk_size * (seqB.tam + 1), MPI_INT, 0, MPI_COMM_WORLD);
 
     MPI_Barrier(MPI_COMM_WORLD);
 
     if (myrank == 0)
     {
-        for (i = len_c - resto; i < len_c; i++)
+        for (i = seqC.tam - resto; i < seqC.tam; i++)
         {
-            for (j = 1; j < len_b + 1; j++)
+            for (j = 1; j < seqB.tam + 1; j++)
             {
-                if (b[j - 1] == c[i])
+                if (seqB.texto[j - 1] == seqC.texto[i])
                 {
-                    P[i * (len_b + 1) + j] = j;
+                    P[i * (seqB.tam + 1) + j] = j;
                 }
                 else
                 {
-                    P[i * (len_b + 1) + j] = P[i * (len_b + 1) + j - 1];
+                    P[i * (seqB.tam + 1) + j] = P[i * (seqB.tam + 1) + j - 1];
                 }
             }
         }
     }
     MPI_Barrier(MPI_COMM_WORLD);
 }
+int lcs(int *atual, int *anterior, int *P, t_sequencia seqA, t_sequencia seqB, t_sequencia seqC, int myrank, int chunk_size, int resto)
 
-int lcs(int *atual, int *anterior, int *P, char *A, char *B, char *C, int len_a, int len_b, int len_c, int myrank, int chunk_size, int resto)
 {
-    MPI_Bcast(P, (len_c * (len_b + 1)), MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(P, (seqC.tam * (seqB.tam + 1)), MPI_INT, 0, MPI_COMM_WORLD);
     int *aux;
     int i;
 
@@ -187,9 +193,9 @@ int lcs(int *atual, int *anterior, int *P, char *A, char *B, char *C, int len_a,
 
     int dp_i_receive[chunk_size];
 
-    for (i = 1; i < len_a; i++)
+    for (i = 1; i < seqA.tam; i++)
     {
-        int c = indice(C, A[i - 1], len_c);
+        int c = indice(seqC.texto, seqA.texto[i - 1], seqC.tam);
         int p_c_j, j;
 
         MPI_Scatter(atual, chunk_size, MPI_INT, dp_i_receive, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
@@ -201,7 +207,7 @@ int lcs(int *atual, int *anterior, int *P, char *A, char *B, char *C, int len_a,
 
         for (; j < end_id; j++)
         {
-            p_c_j = P[c * (len_b + 1) + j];
+            p_c_j = P[c * (seqB.tam + 1) + j];
             if (p_c_j)
             {
                 dp_i_receive[j - start_id] = max(anterior[j], anterior[p_c_j - 1] + 1);
@@ -216,9 +222,9 @@ int lcs(int *atual, int *anterior, int *P, char *A, char *B, char *C, int len_a,
 
         if (myrank == 0)
         {
-            for (j = len_b + 1 - resto; j < len_b + 1; j++)
+            for (j = seqB.tam + 1 - resto; j < seqB.tam + 1; j++)
             {
-                p_c_j = P[c * (len_b + 1) + j];
+                p_c_j = P[c * (seqB.tam + 1) + j];
                 if (p_c_j)
                 {
                     atual[j] = max(anterior[j], anterior[p_c_j - 1] + 1);
@@ -242,7 +248,7 @@ int lcs(int *atual, int *anterior, int *P, char *A, char *B, char *C, int len_a,
     atual = anterior;
     anterior = aux;
 
-    return atual[len_b];
+    return atual[seqB.tam];
 }
 
 int main(int argc, char *argv[])
@@ -259,43 +265,43 @@ int main(int argc, char *argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);   // grab this process's rank
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs); // grab the total num of processes
 
-    int len_a, len_b, len_c;
-    double start_time, stop_time, start_time_yang, stop_time_yang;
-    char *string_A = read_seq(argv[1]);
-    char *string_B = read_seq(argv[2]);
+    double start_time, stop_time;
+    t_sequencia sequenciaA;
+    t_sequencia sequenciaB;
+    t_sequencia sequenciaC;
 
-    char *unique_chars_C = string_char_unicos(string_A, string_B);
-    len_a = strlen(string_A);
-    len_b = strlen(string_B);
-    len_c = strlen(unique_chars_C);
-    len_c++;
+    sequenciaA = ler_entrada(argv[1]);
+    sequenciaB = ler_entrada(argv[2]);
+    sequenciaC = calc_char_unicos(sequenciaA, sequenciaB);
 
-    int chunk_size_p = (len_c / num_procs);
-    int resto_p = (len_c % num_procs);
-    int chunk_size_dp = ((len_b + 1) / num_procs);
-    int resto_dp = ((len_b + 1) % num_procs);
+    int chunk_size_p = (sequenciaC.tam / num_procs);
+    int resto_p = (sequenciaC.tam % num_procs);
+    int chunk_size_dp = ((sequenciaB.tam) / num_procs);
+    int resto_dp = ((sequenciaB.tam) % num_procs);
 
     if (my_rank == 0)
     {
         printf("chunk_p: %d chunk_dp: %d procs: %d\n", chunk_size_p, chunk_size_dp, num_procs);
     }
 
-    int *atual = calloc((len_b + 1), sizeof(int));
-    int *anterior = calloc((len_b + 1), sizeof(int));
+    int *atual = calloc((sequenciaB.tam + 1), sizeof(int));
+    int *anterior = calloc((sequenciaB.tam + 1), sizeof(int));
 
-    int *P_Matrix = calloc((len_c * (len_b + 1)), sizeof(int));
+    int *P_Matrix = calloc((sequenciaC.tam * (sequenciaB.tam + 1)), sizeof(int));
 
-    start_time_yang = MPI_Wtime();
-    inicia_matriz_p(P_Matrix, string_B, len_b, unique_chars_C, len_c, my_rank, chunk_size_p, resto_p);
-    print_matrix(P_Matrix, len_c, len_b + 1);
-    int res = lcs(atual, anterior, P_Matrix, string_A, string_B, unique_chars_C, len_a, len_b, len_c, my_rank, chunk_size_dp, resto_dp);
+    printf("sequence: %i\n", sequenciaC.tam);
+    printf("sequence: %s\n", sequenciaC.texto);
+    start_time = MPI_Wtime();
+    inicia_matriz_p(P_Matrix, my_rank, sequenciaB, sequenciaC, chunk_size_p, resto_p);
+    print_matrix(P_Matrix, sequenciaC.tam, sequenciaB.tam + 1);
+    int res = lcs(atual, anterior, P_Matrix, sequenciaA, sequenciaB, sequenciaC, my_rank, chunk_size_dp, resto_dp);
 
-    stop_time_yang = MPI_Wtime();
+    stop_time = MPI_Wtime();
 
     if (my_rank == 0)
     {
         printf("lcs is: %d\n", res);
-        printf("time taken for lcs is: %lf\n", stop_time_yang - start_time_yang);
+        printf("time taken for lcs is: %lf\n", stop_time - start_time);
     }
     // deallocate pointers
     free(atual);
