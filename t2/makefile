@@ -1,6 +1,6 @@
 CC = mpicc
 #flags para warning, depuração e biblioteca de matematica
-CFLAGS = -Wall --std=c99 -L. -lm
+CFLAGS = -Wall --std=c99 -L. -lm -O3
 
 #regras de ligação
 lcs = lcs_mpi.o

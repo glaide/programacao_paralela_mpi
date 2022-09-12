@@ -7,14 +7,6 @@
 #define ALPHABET_LENGTH 4
 #define max(x, y) ((x) > (y) ? (x) : (y))
 
-// global variables
-char *string_A;
-char *string_B;
-char *unique_chars_C; // unique alphabets
-int c_len;
-int *P_Matrix;
-int *DP_Results; // to store the DP values
-int *dp_prev_row;
 // function prototypes
 int get_index_of_character(char *str, char x, int len);
 void print_matrix(int **x, int row, int col);
@@ -49,11 +41,11 @@ void print_matrix(int **x, int row, int col)
 void calc_P_matrix_v2(int *P, char *b, int len_b, char *c, int len_c, int myrank, int chunk_size, int resto)
 {
     char string_c_scatter[chunk_size];
-    int vetor_p_scatter[chunk_size * (len_b + 1)];
+    int scatter[chunk_size * (len_b + 1)];
 
     MPI_Scatter(c, chunk_size, MPI_CHAR, &string_c_scatter, chunk_size, MPI_CHAR, 0, MPI_COMM_WORLD);
 
-    MPI_Scatter(P, chunk_size * (len_b + 1), MPI_INT, &vetor_p_scatter, chunk_size * (len_b + 1), MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Scatter(P, chunk_size * (len_b + 1), MPI_INT, &scatter, chunk_size * (len_b + 1), MPI_INT, 0, MPI_COMM_WORLD);
 
     MPI_Bcast(b, len_b, MPI_CHAR, 0, MPI_COMM_WORLD);
 
@@ -64,16 +56,16 @@ void calc_P_matrix_v2(int *P, char *b, int len_b, char *c, int len_c, int myrank
         {
             if (b[j - 1] == string_c_scatter[i])
             {
-                vetor_p_scatter[i * (len_b + 1) + j] = j;
+                scatter[i * (len_b + 1) + j] = j;
             }
             else
             {
-                vetor_p_scatter[i * (len_b + 1) + j] = vetor_p_scatter[i * (len_b + 1) + j - 1];
+                scatter[i * (len_b + 1) + j] = scatter[i * (len_b + 1) + j - 1];
             }
         }
     }
 
-    MPI_Gather(vetor_p_scatter, chunk_size * (len_b + 1), MPI_INT, P, chunk_size * (len_b + 1), MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Gather(scatter, chunk_size * (len_b + 1), MPI_INT, P, chunk_size * (len_b + 1), MPI_INT, 0, MPI_COMM_WORLD);
 
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -100,7 +92,7 @@ void calc_P_matrix_v2(int *P, char *b, int len_b, char *c, int len_c, int myrank
 int lcs_yang_v2(int *atual, int *anterior, int *P, char *A, char *B, char *C, int m, int n, int u, int myrank, int chunk_size, int resto)
 {
     MPI_Bcast(P, (u * (n + 1)), MPI_INT, 0, MPI_COMM_WORLD);
-    int *temp;
+    int *aux;
     int i;
 
     int start_id = (myrank * chunk_size);
@@ -152,40 +144,18 @@ int lcs_yang_v2(int *atual, int *anterior, int *P, char *A, char *B, char *C, in
             }
         }
 
-        temp = atual;
+        aux = atual;
         atual = anterior;
-        anterior = temp;
+        anterior = aux;
 
         MPI_Barrier(MPI_COMM_WORLD);
     }
     // o algoritmo faz uma troca entre as linhas a mais que devia na última iteração, então a corrigimos
-    temp = atual;
+    aux = atual;
     atual = anterior;
-    anterior = temp;
+    anterior = aux;
 
     return atual[n];
-}
-
-int lcs(int **DP, char *A, char *B, int m, int n)
-{
-
-    for (int i = 1; i < (m + 1); i++)
-    {
-        for (int j = 1; j < (n + 1); j++)
-        {
-
-            if (A[i - 1] == B[j - 1])
-            {
-                DP[i][j] = DP[i - 1][j - 1] + 1;
-            }
-            else
-            {
-                DP[i][j] = max(DP[i - 1][j], DP[i][j - 1]);
-            }
-        }
-    }
-
-    return DP[m][n];
 }
 
 int main(int argc, char *argv[])
@@ -196,49 +166,53 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    int my_rank;
-    int num_procs;
-    int chunk_size_p, chunk_size_dp, resto_p, resto_dp; // chunk_size for P matrix and DP matrix
-    int res;
+    int my_rank, num_procs;
 
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);   // grab this process's rank
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs); // grab the total num of processes
 
     FILE *fp;
-    int len_a, len_b;
+    int len_a, len_b, c_len;
     double start_time, stop_time, start_time_yang, stop_time_yang;
 
     if (my_rank == 0)
         printf("\nYour input file: %s \n", argv[1]);
     fp = fopen(argv[1], "r");
-    fscanf(fp, "%d %d %d", &len_a, &len_b, &c_len);
-    string_A = (char *)calloc((len_a + 1), sizeof(char *));
-    string_B = (char *)calloc((len_b + 1), sizeof(char *));
-    unique_chars_C = (char *)calloc((c_len + 1), sizeof(char *));
+    int result = fscanf(fp, "%d %d %d", &len_a, &len_b, &c_len);
+    if (result == -1)
+    {
+        printf("erro ao realizar leitura");
+    }
+    char *string_A = calloc((len_a + 1), sizeof(char *));
+    char *string_B = calloc((len_b + 1), sizeof(char *));
+    char *unique_chars_C = calloc((c_len + 1), sizeof(char *));
 
-    fscanf(fp, "%s %s %s", string_A, string_B, unique_chars_C);
-
-    chunk_size_p = (c_len / num_procs);
-    resto_p = (c_len % num_procs);
-    chunk_size_dp = ((len_b + 1) / num_procs);
-    resto_dp = ((len_b + 1) % num_procs);
+    result = fscanf(fp, "%s %s %s", string_A, string_B, unique_chars_C);
+    if (result == -1)
+    {
+        printf("erro ao realizar leitura");
+    }
+    int chunk_size_p = (c_len / num_procs);
+    int resto_p = (c_len % num_procs);
+    int chunk_size_dp = ((len_b + 1) / num_procs);
+    int resto_dp = ((len_b + 1) % num_procs);
 
     if (my_rank == 0)
     {
         printf("chunk_p: %d chunk_dp: %d procs: %d\n", chunk_size_p, chunk_size_dp, num_procs);
     }
 
-    int *atual = (int *)calloc((len_b + 1), sizeof(int));
-    int *anterior = (int *)calloc((len_b + 1), sizeof(int));
+    int *atual = calloc((len_b + 1), sizeof(int));
+    int *anterior = calloc((len_b + 1), sizeof(int));
 
-    P_Matrix = (int *)calloc((c_len * (len_b + 1)), sizeof(int));
+    int *P_Matrix = calloc((c_len * (len_b + 1)), sizeof(int));
 
     start_time_yang = MPI_Wtime();
 
     calc_P_matrix_v2(P_Matrix, string_B, len_b, unique_chars_C, c_len, my_rank, chunk_size_p, resto_p);
 
-    res = lcs_yang_v2(atual, anterior, P_Matrix, string_A, string_B, unique_chars_C, len_a, len_b, c_len, my_rank, chunk_size_dp, resto_dp);
+    int res = lcs_yang_v2(atual, anterior, P_Matrix, string_A, string_B, unique_chars_C, len_a, len_b, c_len, my_rank, chunk_size_dp, resto_dp);
 
     stop_time_yang = MPI_Wtime();
 
@@ -248,8 +222,9 @@ int main(int argc, char *argv[])
         printf("time taken for lcs_yang_v2 is: %lf\n", stop_time_yang - start_time_yang);
     }
     // deallocate pointers
+    free(atual);
+    free(anterior);
     free(P_Matrix);
-    free(DP_Results);
 
     // Shutdown MPI (important - don't forget!)
     MPI_Finalize();
