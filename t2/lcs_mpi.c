@@ -197,6 +197,7 @@ int main(int argc, char *argv[])
     int resto_p = (c_len % num_procs);
     int chunk_size_dp = ((len_b + 1) / num_procs);
     int resto_dp = ((len_b + 1) % num_procs);
+    printf("alocou tud\n");
 
     if (my_rank == 0)
     {
@@ -209,7 +210,6 @@ int main(int argc, char *argv[])
     int *P_Matrix = calloc((c_len * (len_b + 1)), sizeof(int));
 
     start_time_yang = MPI_Wtime();
-    printf("alocou tud\n");
     calc_P_matrix_v2(P_Matrix, string_B, len_b, unique_chars_C, c_len, my_rank, chunk_size_p, resto_p);
 
     int res = lcs_yang_v2(atual, anterior, P_Matrix, string_A, string_B, unique_chars_C, len_a, len_b, c_len, my_rank, chunk_size_dp, resto_dp);
