@@ -195,7 +195,11 @@ int main(int argc, char *argv[])
     int resto_p = (c_len % num_procs);
     int chunk_size_dp = ((len_b + 1) / num_procs);
     int resto_dp = ((len_b + 1) % num_procs);
-	printf("rank: %i\n", my_rank);
+    printf("rank: %i\n", my_rank);
+    chunk_size_p++;
+    resto_p++;
+    resto_dp++;
+    chunk_size_dp++;
     if (my_rank == 0)
     {
         printf("chunk_p: %d chunk_dp: %d procs: %d\n", chunk_size_p, chunk_size_dp, num_procs);
