@@ -136,7 +136,7 @@ void print_matrix(int *P, int len_b, int len_c)
     for (int i = 0; i < len_c; i++)
     {
         printf("\n");
-        // não faz para j = 0 pois essa coluna possui somente 0s
+
         for (int j = 0; j < len_b + 1; j++)
         {
             printf("%d ", P[i * (len_b + 1) + j]);
@@ -244,7 +244,7 @@ int main(int argc, char **argv)
     {
         omp_set_num_threads(atoi(argv[3]));
     }
-    omp_set_num_threads(1);
+
     start_time = omp_get_wtime();
     // ponteiros p/ as strings
     char *seqA, *seqB, *seqC;
