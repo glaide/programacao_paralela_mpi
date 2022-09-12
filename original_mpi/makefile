@@ -23,7 +23,7 @@ OBJS = $(patsubst %.c, $(OBJDIR)/%.o, $(SRCS))
 # name of the compiler
 CC = mpicc
 # additional compiler flags to pass in
-CFLAGS = -Wall --std=c99 -L.
+CFLAGS = -Wall --std=c99 -L. -g
 # libraries for the linker
 LIBS = -lm
 

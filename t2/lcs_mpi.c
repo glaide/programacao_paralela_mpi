@@ -8,13 +8,11 @@
 #define max(x, y) ((x) > (y) ? (x) : (y))
 
 // function prototypes
-int get_index_of_character(char *str, char x, int len);
-void print_matrix(int **x, int row, int col);
-void inicia_matriz_P(int *P, char *b, int len_b, char *c, int len_c, int myrank, int chunk, int resto_chunk);
-int lcs_yang_v2(int *atual, int *anterior, int *P, char *A, char *B, char *C, int m, int n, int u, int myrank, int chunk_size, int resto);
-int lcs(int **DP, char *A, char *B, int m, int n);
-
-int get_index_of_character(char *str, char x, int len)
+int indice(char *str, char x, int len);
+void print_matrix(int *x, int row, int col);
+int lcs(int *atual, int *anterior, int *P, char *A, char *B, char *C, int len_a, int len_b, int c_len, int myrank, int chunk_size, int resto);
+void inicia_matriz_p(int *P, char *b, int len_b, char *c, int len_c, int myrank, int chunk_size, int resto);
+int indice(char *str, char x, int len)
 {
     for (int i = 0; i < len; i++)
     {
@@ -26,19 +24,19 @@ int get_index_of_character(char *str, char x, int len)
     return -1; // not found the character x in str
 }
 
-void print_matrix(int **x, int row, int col)
+void print_matrix(int *x, int row, int col)
 {
     for (int i = 0; i < row; i++)
     {
         for (int j = 0; j < col; j++)
         {
-            printf("%d ", x[i][j]);
+            printf("%d ", x[i * col + j]);
         }
         printf("\n");
     }
 }
 
-void calc_P_matrix_v2(int *P, char *b, int len_b, char *c, int len_c, int myrank, int chunk_size, int resto)
+void inicia_matriz_p(int *P, char *b, int len_b, char *c, int len_c, int myrank, int chunk_size, int resto)
 {
     char string_c_scatter[chunk_size];
     int scatter[chunk_size * (len_b + 1)];
@@ -89,9 +87,9 @@ void calc_P_matrix_v2(int *P, char *b, int len_b, char *c, int len_c, int myrank
     MPI_Barrier(MPI_COMM_WORLD);
 }
 
-int lcs_yang_v2(int *atual, int *anterior, int *P, char *A, char *B, char *C, int m, int n, int u, int myrank, int chunk_size, int resto)
+int lcs(int *atual, int *anterior, int *P, char *A, char *B, char *C, int len_a, int len_b, int c_len, int myrank, int chunk_size, int resto)
 {
-    MPI_Bcast(P, (u * (n + 1)), MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(P, (c_len * (len_b + 1)), MPI_INT, 0, MPI_COMM_WORLD);
     int *aux;
     int i;
 
@@ -100,9 +98,9 @@ int lcs_yang_v2(int *atual, int *anterior, int *P, char *A, char *B, char *C, in
 
     int dp_i_receive[chunk_size];
 
-    for (i = 1; i < m; i++)
+    for (i = 1; i < len_a; i++)
     {
-        int c = get_index_of_character(C, A[i - 1], u);
+        int c = indice(C, A[i - 1], c_len);
         int p_c_j, j;
 
         MPI_Scatter(atual, chunk_size, MPI_INT, dp_i_receive, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
@@ -114,7 +112,7 @@ int lcs_yang_v2(int *atual, int *anterior, int *P, char *A, char *B, char *C, in
 
         for (; j < end_id; j++)
         {
-            p_c_j = P[c * (n + 1) + j];
+            p_c_j = P[c * (len_b + 1) + j];
             if (p_c_j)
             {
                 dp_i_receive[j - start_id] = max(anterior[j], anterior[p_c_j - 1] + 1);
@@ -129,9 +127,9 @@ int lcs_yang_v2(int *atual, int *anterior, int *P, char *A, char *B, char *C, in
 
         if (myrank == 0)
         {
-            for (j = n + 1 - resto; j < n + 1; j++)
+            for (j = len_b + 1 - resto; j < len_b + 1; j++)
             {
-                p_c_j = P[c * (n + 1) + j];
+                p_c_j = P[c * (len_b + 1) + j];
                 if (p_c_j)
                 {
                     atual[j] = max(anterior[j], anterior[p_c_j - 1] + 1);
@@ -155,7 +153,7 @@ int lcs_yang_v2(int *atual, int *anterior, int *P, char *A, char *B, char *C, in
     atual = anterior;
     anterior = aux;
 
-    return atual[n];
+    return atual[len_b];
 }
 
 int main(int argc, char *argv[])
@@ -197,7 +195,6 @@ int main(int argc, char *argv[])
     int resto_p = (c_len % num_procs);
     int chunk_size_dp = ((len_b + 1) / num_procs);
     int resto_dp = ((len_b + 1) % num_procs);
-    printf("alocou tud\n");
 
     if (my_rank == 0)
     {
@@ -210,16 +207,16 @@ int main(int argc, char *argv[])
     int *P_Matrix = calloc((c_len * (len_b + 1)), sizeof(int));
 
     start_time_yang = MPI_Wtime();
-    calc_P_matrix_v2(P_Matrix, string_B, len_b, unique_chars_C, c_len, my_rank, chunk_size_p, resto_p);
-
-    int res = lcs_yang_v2(atual, anterior, P_Matrix, string_A, string_B, unique_chars_C, len_a, len_b, c_len, my_rank, chunk_size_dp, resto_dp);
+    inicia_matriz_p(P_Matrix, string_B, len_b, unique_chars_C, c_len, my_rank, chunk_size_p, resto_p);
+    print_matrix(P_Matrix, c_len, len_b);
+    int res = lcs(atual, anterior, P_Matrix, string_A, string_B, unique_chars_C, len_a, len_b, c_len, my_rank, chunk_size_dp, resto_dp);
 
     stop_time_yang = MPI_Wtime();
 
     if (my_rank == 0)
     {
-        printf("lcs_yang_v2 is: %d\n", res);
-        printf("time taken for lcs_yang_v2 is: %lf\n", stop_time_yang - start_time_yang);
+        printf("lcs is: %d\n", res);
+        printf("time taken for lcs is: %lf\n", stop_time_yang - start_time_yang);
     }
     // deallocate pointers
     free(atual);

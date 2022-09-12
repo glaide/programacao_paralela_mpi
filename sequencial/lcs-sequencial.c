@@ -1,187 +1,101 @@
+
+/****
+	Author: Rayhan Shikder,
+	email: shikderr@myumanitoba.ca
+	MSc Student,
+	Department of Computer Science,
+	University of Manitoba, Winnipeg, MB, Canada
+****/
+
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include "time.h"
+#include <stdlib.h>
+#include <time.h>
+#include "omp.h"
+// macros
+#define max(x, y) ((x) > (y) ? (x) : (y))
 
-#ifndef max
-#define max(a, b) (((a) > (b)) ? (a) : (b))
-#endif
+// global variables
+char *string_A;
+char *string_B;
+char *unique_chars_C; // unique alphabets
+int c_len;
+short **DP_Results; // to store the DP values
 
-typedef struct sequencia
+// function prototypes
+void print_matrix(int **x, int row, int col);
+short lcs(short **DP, char *A, char *B, int m, int n);
+
+void print_matrix(int **x, int row, int col)
 {
-	char *texto;
-	long tam;
-} t_sequencia;
-
-t_sequencia ler_entrada(char *filename);
-
-typedef unsigned short mtype;
-
-/* Read sequence from a file to a char vector.
- Filename is passed as parameter */
-
-t_sequencia ler_entrada(char *filename)
-{
-	FILE *arquivo_sequencia = NULL;
-	int i = 0;
-	arquivo_sequencia = fopen(filename, "rt");
-	t_sequencia s;
-
-	if (arquivo_sequencia == NULL)
+	for (int i = 0; i < row; i++)
 	{
-		printf("a reading file %s\n", filename);
-		exit(1);
-	}
-
-	// verifica o tamanho da arquivo_sequencia
-	fseek(arquivo_sequencia, 0L, SEEK_END);
-	// salva o tamanho da arquivo_sequencia
-	s.tam = ftell(arquivo_sequencia);
-	// volta o arquivo para o inicio
-	rewind(arquivo_sequencia);
-
-	// aloca memoria para salvar valor da sequencia
-
-	s.texto = (char *)malloc(s.tam + 1 * sizeof(char));
-	if (s.texto == NULL)
-	{
-		printf("Erro ao alocar memória da sequencia");
-		exit(1);
-	}
-
-	// leitura da sequencia
-	// read sequence from file
-	while (!feof(arquivo_sequencia))
-	{
-		s.texto[i] = fgetc(arquivo_sequencia);
-		if ((s.texto[i] != '\n') && (s.texto[i] != EOF))
-			i++;
-	}
-	s.texto[i] = '\0';
-
-	// fecha o arquivo
-	fclose(arquivo_sequencia);
-	return s;
-}
-mtype **allocateScoreMatrix(long sizeA, long sizeB)
-{
-	int i;
-	// Allocate memory for LCS score matrix
-	mtype **scoreMatrix = (mtype **)malloc((sizeB + 1) * sizeof(mtype *));
-	for (i = 0; i < (sizeB + 1); i++)
-		scoreMatrix[i] = (mtype *)malloc((sizeA + 1) * sizeof(mtype));
-	return scoreMatrix;
-}
-
-void initScoreMatrix(mtype **scoreMatrix, long sizeA, long sizeB)
-{
-	int i, j;
-	// Fill first line of LCS score matrix with zeroes
-	for (j = 0; j < (sizeA + 1); j++)
-		scoreMatrix[0][j] = 0;
-
-	// Do the same for the first collumn
-	for (i = 1; i < (sizeB + 1); i++)
-		scoreMatrix[i][0] = 0;
-}
-
-int LCS(mtype **scoreMatrix, long sizeA, long sizeB, char *seqA, char *seqB)
-{
-	int i, j;
-	for (i = 1; i < sizeB + 1; i++)
-	{
-		for (j = 1; j < sizeA + 1; j++)
+		for (int j = 0; j < col; j++)
 		{
-			if (seqA[j - 1] == seqB[i - 1])
-			{
-				/* if elements in both sequences match,
-				 the corresponding score will be the score from
-				 previous elements + 1*/
-				scoreMatrix[i][j] = scoreMatrix[i - 1][j - 1] + 1;
-			}
-			else
-			{
-				/* else, pick the maximum value (score) from left and upper elements*/
-				scoreMatrix[i][j] =
-					max(scoreMatrix[i - 1][j], scoreMatrix[i][j - 1]);
-			}
-		}
-	}
-	return scoreMatrix[sizeB][sizeA];
-}
-void printMatrix(char *seqA, char *seqB, mtype **scoreMatrix, int sizeA,
-				 int sizeB)
-{
-	int i, j;
-
-	// print header
-	printf("Score Matrix:\n");
-	printf("========================================\n");
-
-	// print LCS score matrix allong with sequences
-
-	printf("    ");
-	printf("%5c   ", ' ');
-
-	for (j = 0; j < sizeA; j++)
-		printf("%5c   ", seqA[j]);
-	printf("\n");
-	for (i = 0; i < sizeB + 1; i++)
-	{
-		if (i == 0)
-			printf("    ");
-		else
-			printf("%c   ", seqB[i - 1]);
-		for (j = 0; j < sizeA + 1; j++)
-		{
-			printf("%5d   ", scoreMatrix[i][j]);
+			printf("%d ", x[i][j]);
 		}
 		printf("\n");
 	}
-	printf("========================================\n");
 }
 
-void freeScoreMatrix(mtype **scoreMatrix, long sizeB)
+short lcs(short **DP, char *A, char *B, int m, int n)
 {
-	int i;
-	for (i = 0; i < (sizeB + 1); i++)
-		free(scoreMatrix[i]);
-	free(scoreMatrix);
+	// printf("%s %d \n%s %d\n",A,m,B,n );
+
+	for (int i = 1; i < (m + 1); i++)
+	{
+		for (int j = 1; j < (n + 1); j++)
+		{
+			if (A[i - 1] == B[j - 1])
+			{
+				DP[i][j] = DP[i - 1][j - 1] + 1;
+			}
+			else
+			{
+				DP[i][j] = max(DP[i - 1][j], DP[i][j - 1]);
+			}
+		}
+	}
+
+	return DP[m][n];
 }
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
+	if (argc <= 1)
+	{
+		printf("Error: No input file specified! Please specify the input file, and run again!\n");
+		return 0;
+	}
+	printf("\nYour input file: %s \n", argv[1]);
 
-	t_sequencia sequencia1;
-	t_sequencia sequencia2;
-	time_t begin, end;
-	// read both sequences
-	sequencia1 = ler_entrada(argv[1]);
-	sequencia2 = ler_entrada(argv[2]);
+	FILE *fp;
+	int len_a, len_b;
+	double start_time, stop_time;
 
-	// allocate LCS score matrix
-	mtype **scoreMatrix = allocateScoreMatrix(sequencia1.tam, sequencia2.tam);
+	fp = fopen(argv[1], "r");
+	fscanf(fp, "%d %d %d", &len_a, &len_b, &c_len);
+	printf("Sequence lengths : %d %d %d\n", len_a, len_b, c_len);
 
-	// initialize LCS score matrix
-	initScoreMatrix(scoreMatrix, sequencia1.tam, sequencia2.tam);
+	string_A = (char *)malloc((len_a + 1) * sizeof(char *));
+	string_B = (char *)malloc((len_b + 1) * sizeof(char *));
+	unique_chars_C = (char *)malloc((c_len + 1) * sizeof(char *));
 
-	// fill up the rest of the matrix and return final score (element locate at the last line and collumn)
-	begin = time(NULL);
-	mtype score = LCS(scoreMatrix, sequencia1.tam, sequencia2.tam, sequencia1.texto, sequencia2.texto);
-	end = time(NULL);
+	fscanf(fp, "%s %s %s", string_A, string_B, unique_chars_C);
 
-	// 	/* if you wish to see the entire score matrix,
-	// 	 for debug purposes, define DEBUGMATRIX. */
-#ifdef DEBUGMATRIX
-	printMatrix(seqA, seqB, scoreMatrix, sequencia1.tam, sequencia2.tam);
-#endif
+	// allocate memory for DP Results
+	DP_Results = (short **)malloc((len_a + 1) * sizeof(short *));
+	for (int k = 0; k < len_a + 1; k++)
+	{
+		DP_Results[k] = (short *)calloc((len_b + 1), sizeof(short));
+	}
 
-	// print score
-	printf("\nScore: %d\n", score);
-	printf("Tempo de processamento: %f ", difftime(end, begin));
+	start_time = omp_get_wtime();
+	printf("Length of LCS is: %d\n", lcs(DP_Results, string_A, string_B, len_a, len_b));
+	stop_time = omp_get_wtime();
+	printf("Time taken by sequential algorithm is: %lf seconds\n", stop_time - start_time);
 
-	// free score matrix
-	freeScoreMatrix(scoreMatrix, sequencia2.tam);
-
-	return EXIT_SUCCESS;
+	// deallocate pointers
+	free(DP_Results);
+	return 0;
 }

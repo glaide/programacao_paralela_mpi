@@ -48,6 +48,7 @@ void print_matrix(int **x, int row, int col)
 
 void calc_P_matrix_v2(int *P, char *b, int len_b, char *c, int len_c, int myrank, int chunk_size)
 {
+
     char receive_array_for_scatter_c[chunk_size];
     int receive_array_for_scatter_p[chunk_size * (len_b + 1)];
     // Scatter the char array chunks by sending each process a particular chunk
@@ -77,6 +78,8 @@ void calc_P_matrix_v2(int *P, char *b, int len_b, char *c, int len_c, int myrank
 
 int lcs_yang_v2(int *DP, int *prev_row, int *P, char *A, char *B, char *C, int m, int n, int u, int myrank, int chunk_size)
 {
+    printf("lcs_yang_v2 is: ");
+
     MPI_Bcast(P, (u * (n + 1)), MPI_INT, 0, MPI_COMM_WORLD);
     for (int i = 1; i < m + 1; i++)
     {
@@ -104,6 +107,8 @@ int lcs_yang_v2(int *DP, int *prev_row, int *P, char *A, char *B, char *C, int m
             prev_row[j] = DP[j];
         }
     }
+    printf("lcs_yang_v2 is: ");
+
     return DP[n];
 }
 
