@@ -64,9 +64,9 @@ mtype **allocateScoreMatrix(int sizeA, int sizeB)
 {
 	int i;
 	// Allocate memory for LCS score matrix
-	mtype **scoreMatrix = (mtype **)malloc((sizeB + 1) * sizeof(mtype *));
+	mtype **scoreMatrix = (mtype **)calloc((sizeB + 1), sizeof(mtype *));
 	for (i = 0; i < (sizeB + 1); i++)
-		scoreMatrix[i] = (mtype *)malloc((sizeA + 1) * sizeof(mtype));
+		scoreMatrix[i] = (mtype *)calloc((sizeA + 1), sizeof(mtype));
 	return scoreMatrix;
 }
 

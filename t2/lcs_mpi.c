@@ -116,7 +116,7 @@ int indice(char *str, char x, int len)
             return i;
         }
     }
-    return 0; // not found the character x in str
+    return -1; // not found the character x in str
 }
 
 void print_matrix(int *x, int row, int col)
@@ -276,8 +276,8 @@ int main(int argc, char *argv[])
 
     int chunk_size_p = (sequenciaC.tam / num_procs);
     int resto_p = (sequenciaC.tam % num_procs);
-    int chunk_size_dp = ((sequenciaB.tam) / num_procs);
-    int resto_dp = ((sequenciaB.tam) % num_procs);
+    int chunk_size_dp = ((sequenciaB.tam + 1) / num_procs);
+    int resto_dp = ((sequenciaB.tam + 1) % num_procs);
 
     if (my_rank == 0)
     {
@@ -286,11 +286,8 @@ int main(int argc, char *argv[])
 
     int *atual = calloc((sequenciaB.tam + 1), sizeof(int));
     int *anterior = calloc((sequenciaB.tam + 1), sizeof(int));
-
     int *P_Matrix = calloc((sequenciaC.tam * (sequenciaB.tam + 1)), sizeof(int));
 
-    printf("sequence: %i\n", sequenciaC.tam);
-    printf("sequence: %s\n", sequenciaC.texto);
     start_time = MPI_Wtime();
     inicia_matriz_p(P_Matrix, my_rank, sequenciaB, sequenciaC, chunk_size_p, resto_p);
     print_matrix(P_Matrix, sequenciaC.tam, sequenciaB.tam + 1);
