@@ -287,11 +287,11 @@ int main(int argc, char **argv)
 {
 	double start_time, midi_time, stop_time;
 
-	// if (argc < 3)
-	// {
-	// 	printf("Não foram especificados arquivos de entrada.");
-	// 	exit(1);
-	// }
+	if (argc < 3)
+	{
+		printf("Não foram especificados arquivos de entrada.");
+		exit(1);
+	}
 
 	start_time = MPI_Wtime();
 	// ponteiros p/ as strings
@@ -332,6 +332,7 @@ int main(int argc, char **argv)
 
 	int my_rank, num_procs; // chunk_size for P matrix and linha_atual matrix
 	MPI_Init(&argc, &argv);
+
 	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);   // grab this process's rank
 	MPI_Comm_size(MPI_COMM_WORLD, &num_procs); // grab the total num of processes
 
