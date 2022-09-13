@@ -1,0 +1,34 @@
+12.470508
+12.450611
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort
+Número de processos 2
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort
+Número de processos 4
+[mpiexec@glaide] Sending Ctrl-C to processes as requested
+[mpiexec@glaide] Press Ctrl-C again to force abort

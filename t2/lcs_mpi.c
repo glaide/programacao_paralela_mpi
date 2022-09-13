@@ -188,8 +188,8 @@ int lcs(int *atual, int *anterior, int *P, t_sequencia seqA, t_sequencia seqB, t
     int *aux;
     int i;
 
-    int start_id = (myrank * chunk_size);
-    int end_id = (myrank * chunk_size) + chunk_size;
+    int indice_inicial = (myrank * chunk_size);
+    int indice_final = (myrank * chunk_size) + chunk_size;
 
     int dp_i_receive[chunk_size];
 
@@ -200,21 +200,21 @@ int lcs(int *atual, int *anterior, int *P, t_sequencia seqA, t_sequencia seqB, t
 
         MPI_Scatter(atual, chunk_size, MPI_INT, dp_i_receive, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
 
-        j = start_id;
+        j = indice_inicial;
 
         if (j == 0)
             j = 1;
 
-        for (; j < end_id; j++)
+        for (; j < indice_final; j++)
         {
             p_c_j = P[c * (seqB.tam + 1) + j];
             if (p_c_j)
             {
-                dp_i_receive[j - start_id] = max(anterior[j], anterior[p_c_j - 1] + 1);
+                dp_i_receive[j - indice_inicial] = max(anterior[j], anterior[p_c_j - 1] + 1);
             }
             else
             {
-                dp_i_receive[j - start_id] = anterior[j];
+                dp_i_receive[j - indice_inicial] = anterior[j];
             }
         }
 
@@ -243,7 +243,7 @@ int lcs(int *atual, int *anterior, int *P, t_sequencia seqA, t_sequencia seqB, t
 
         MPI_Barrier(MPI_COMM_WORLD);
     }
-    // o algoritmo faz uma troca entre as linhas a mais que devia na última iteração, então a corrigimos
+    // corretacao de troca de linha
     aux = atual;
     atual = anterior;
     anterior = aux;
@@ -260,12 +260,14 @@ int main(int argc, char *argv[])
     }
 
     int my_rank, num_procs;
+    double start_time, stop_time;
+    clock_t inicio, fim;
 
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);   // grab this process's rank
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs); // grab the total num of processes
 
-    double start_time, stop_time;
+    // inicio = clock();
     t_sequencia sequenciaA;
     t_sequencia sequenciaB;
     t_sequencia sequenciaC;
@@ -279,28 +281,25 @@ int main(int argc, char *argv[])
     int chunk_size_dp = ((sequenciaB.tam + 1) / num_procs);
     int resto_dp = ((sequenciaB.tam + 1) % num_procs);
 
-    if (my_rank == 0)
-    {
-        printf("chunk_p: %d chunk_dp: %d procs: %d\n", chunk_size_p, chunk_size_dp, num_procs);
-    }
-
     int *atual = calloc((sequenciaB.tam + 1), sizeof(int));
     int *anterior = calloc((sequenciaB.tam + 1), sizeof(int));
     int *P_Matrix = calloc((sequenciaC.tam * (sequenciaB.tam + 1)), sizeof(int));
+    // fim = clock();
 
     start_time = MPI_Wtime();
     inicia_matriz_p(P_Matrix, my_rank, sequenciaB, sequenciaC, chunk_size_p, resto_p);
-    print_matrix(P_Matrix, sequenciaC.tam, sequenciaB.tam + 1);
+
     int res = lcs(atual, anterior, P_Matrix, sequenciaA, sequenciaB, sequenciaC, my_rank, chunk_size_dp, resto_dp);
 
     stop_time = MPI_Wtime();
 
     if (my_rank == 0)
     {
-        printf("lcs is: %d\n", res);
-        printf("time taken for lcs is: %lf\n", stop_time - start_time);
+        printf("lcs: %d\n", res);
+
+        printf("MPI time: %lf\n", stop_time - start_time);
     }
-    // deallocate pointers
+
     free(atual);
     free(anterior);
     free(P_Matrix);
