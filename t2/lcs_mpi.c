@@ -187,24 +187,17 @@ int lcs(int *atual, int *anterior, int *P, t_sequencia seqA, t_sequencia seqB, t
     MPI_Bcast(P, (seqC.tam * (seqB.tam + 1)), MPI_INT, 0, MPI_COMM_WORLD);
     int *aux;
     int i;
-
     int indice_inicial = (myrank * chunk_size);
     int indice_final = (myrank * chunk_size) + chunk_size;
-
     int dp_i_receive[chunk_size];
-
     for (i = 1; i < seqA.tam; i++)
     {
         int c = indice(seqC.texto, seqA.texto[i - 1], seqC.tam);
         int p_c_j, j;
-
         MPI_Scatter(atual, chunk_size, MPI_INT, dp_i_receive, chunk_size, MPI_INT, 0, MPI_COMM_WORLD);
-
         j = indice_inicial;
-
         if (j == 0)
             j = 1;
-
         for (; j < indice_final; j++)
         {
             p_c_j = P[c * (seqB.tam + 1) + j];
@@ -217,9 +210,7 @@ int lcs(int *atual, int *anterior, int *P, t_sequencia seqA, t_sequencia seqB, t
                 dp_i_receive[j - indice_inicial] = anterior[j];
             }
         }
-
         MPI_Allgather(dp_i_receive, chunk_size, MPI_INT, atual, chunk_size, MPI_INT, MPI_COMM_WORLD);
-
         if (myrank == 0)
         {
             for (j = seqB.tam + 1 - resto; j < seqB.tam + 1; j++)
@@ -231,7 +222,6 @@ int lcs(int *atual, int *anterior, int *P, t_sequencia seqA, t_sequencia seqB, t
                 }
                 else
                 {
-
                     atual[j] = anterior[j];
                 }
             }
